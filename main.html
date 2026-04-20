@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Virtual Pet FSA - Penguu</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      :root {
+        --bg-color: #fdf0dd;
+        --accent: #d6bfa5;
+        --bar-bg: #cfc6b2;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg-color);
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      h1 {
+        text-align: center;
+        margin: 20px 0 0;
+        font-size: 40px;
+        color: #4a4a4a;
+      }
+
+      .main-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 0;
+      }
+
+      .pet-stage {
+        flex: 0 0 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .pet-img {
+        max-width: 80%;
+        max-height: 65vh;
+        object-fit: contain;
+        margin-left: 0;
+      }
+
+      .stats-panel {
+        flex: 0 0 350px;
+        margin-left: 20px;
+        background: rgba(255, 255, 255, 0.3);
+        padding: 25px;
+        border-radius: 20px;
+      }
+
+      #stateText {
+        margin-top: 15px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #555;
+        background: rgba(255, 255, 255, 0.5);
+        padding: 5px 20px;
+        border-radius: 20px;
+      }
+
+      .stats-panel {
+        flex: 1;
+        max-width: 350px;
+        background: rgba(255, 255, 255, 0.3);
+        padding: 20px;
+        border-radius: 20px;
+      }
+
+      .status-item {
+        margin-bottom: 15px;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .bar {
+        width: 100%;
+        height: 14px;
+        background: var(--bar-bg);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 5px;
+      }
+
+      .fill {
+        height: 100%;
+        width: 50%;
+        transition: width 0.5s ease-in-out;
+      }
+
+      #barNutrition {
+        background: #e27d60;
+      }
+      #barEnergy {
+        background: #5dade2;
+      }
+      #barHappy {
+        background: #58d68d;
+      }
+      #barHealth {
+        background: #f4d03f;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding-bottom: 40px;
+      }
+
+      button {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 12px;
+        background: var(--accent);
+        color: #5d4037;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 0 #bca68e;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        background: #c8ae90;
+      }
+
+      button:active {
+        transform: translateY(2px);
+        box-shadow: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <audio id="bgMusic" loop>
+      <source src="backsound.mp3" type="audio/mpeg" />
+    </audio>
+
+    <h1>🐾 Penguu</h1>
+
+    <div class="main-wrapper">
+      <div class="pet-stage">
+        <img id="petImage" class="pet-img" alt="Penguu" />
+        <div id="stateText"></div>
+      </div>
+
+      <div class="stats-panel">
+        <div class="status-item">
+          Nutrisi: <span id="valNutrition"></span>%
+          <div class="bar"><div id="barNutrition" class="fill"></div></div>
+        </div>
+        <div class="status-item">
+          Energi: <span id="valEnergy"></span>%
+          <div class="bar"><div id="barEnergy" class="fill"></div></div>
+        </div>
+        <div class="status-item">
+          Kebahagiaan: <span id="valHappy"></span>%
+          <div class="bar"><div id="barHappy" class="fill"></div></div>
+        </div>
+        <div class="status-item">
+          Kesehatan: <span id="valHealth"></span>%
+          <div class="bar"><div id="barHealth" class="fill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button onclick="interact('pet')">👋 Elus</button>
+      <button onclick="interact('feed')">🍲 Makan</button>
+      <button onclick="interact('sleep')">💤 Tidur</button>
+      <button onclick="interact('play')">🎡 Main</button>
+    </div>
+
+    <script>
+      const penguu = {
+        nutrition: 60,
+        energy: 50,
+        happiness: 70,
+        health: 100,
+        state: "Hidup",
+      };
+
+      const music = document.getElementById("bgMusic");
+
+      function updateUI() {
+        const stats = ["nutrition", "energy", "happy", "health"];
+        const dataMap = {
+          nutrition: "nutrition",
+          energy: "energy",
+          happy: "happiness",
+          health: "health",
+        };
+
+        stats.forEach((s) => {
+          const val = penguu[dataMap[s]];
+          document.getElementById(
+            `val${s.charAt(0).toUpperCase() + s.slice(1)}`,
+          ).innerText = val;
+          document.getElementById(
+            `bar${s.charAt(0).toUpperCase() + s.slice(1)}`,
+          ).style.width = val + "%";
+        });
+
+        document.getElementById("stateText").innerText =
+          "Penguu sedang " + penguu.state;
+
+        const img = document.getElementById("petImage");
+        const stateMap = {
+          Mati: "xx.png",
+          Lapar: "lapar.png",
+          Lelah: "lelah.png",
+          Senang: "senang.png",
+          Hidup: "hidup.png",
+        };
+        img.src = stateMap[penguu.state] || "hidup.png";
+      }
+
+      function checkState() {
+        if (penguu.health <= 0) {
+          penguu.state = "Mati";
+          updateUI();
+          setTimeout(() => {
+            alert("Penguu telah mati! Klik OK untuk mulai ulang.");
+            location.reload();
+          }, 100);
+          return;
+        }
+
+        if (penguu.nutrition <= 30) penguu.state = "Lapar";
+        else if (penguu.energy <= 30) penguu.state = "Lelah";
+        else if (penguu.happiness >= 70) penguu.state = "Senang";
+        else penguu.state = "Hidup";
+      }
+
+      function interact(type) {
+        if (penguu.state === "Mati") return;
+
+        if (music.paused)
+          music.play().catch((e) => console.log("Audio diredam"));
+        music.volume = 0.1;
+
+        switch (type) {
+          case "pet":
+            penguu.happiness += 10;
+            penguu.health += 5;
+            break;
+          case "feed":
+            penguu.nutrition += 15;
+            penguu.energy += 5;
+            penguu.health += 10;
+            break;
+          case "sleep":
+            penguu.energy += 20;
+            penguu.health += 15;
+            break;
+          case "play":
+            penguu.happiness += 15;
+            penguu.energy -= 10;
+            penguu.health += 2;
+            break;
+        }
+
+        constrainValues();
+        checkState();
+        updateUI();
+      }
+
+      function constrainValues() {
+        ["nutrition", "energy", "happiness", "health"].forEach((attr) => {
+          penguu[attr] = Math.min(100, Math.max(0, penguu[attr]));
+        });
+      }
+
+      setInterval(() => {
+        if (penguu.health <= 0) return;
+
+        penguu.nutrition -= 5;
+        penguu.energy -= 5;
+
+        if (penguu.nutrition <= 35 || penguu.energy <= 35)
+        penguu.happiness -= 8;
+        if (penguu.nutrition <= 40 || penguu.energy <= 40) 
+        penguu.health -= 8;
+
+        constrainValues();
+        checkState();
+        updateUI();
+      }, 2000);
+
+      updateUI();
+    </script>
+  </body>
+</html>
