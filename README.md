@@ -36,5 +36,5 @@ Senang	Kebahagiaan ≥ 70%	senang.png
 Hidup	Kondisi Normal	hidup.png
 
 Dibuat dengan ❤️ (dari Alya dan Aurel) untuk simulasi Finite State Automata
-_
-Link akses: https://aurelliazhr.github.io/Virtual-Pet-Penguu/_
+
+Link akses: https://aurelliazhr.github.io/Virtual-Pet-Penguu/
