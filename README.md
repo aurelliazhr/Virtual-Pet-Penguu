@@ -4,7 +4,7 @@ Penguu adalah aplikasi Virtual Pet berbasis web yang dibangun menggunakan prinsi
 
     Sistem Status Real-time: Pantau Nutrisi, Energi, Kebahagiaan, dan Kesehatan melalui progress bar yang dinamis.
 
-    Mekanisme FSA (Finite State Automata): Penguu berubah status (Lapar, Lelah, Senang, Hidup, atau Mati) secara otomatis berdasarkan ambang batas statistik.
+    Mekanisme FSA (Finite State Automata): Penguu berubah status (Lapar, Lelah, Senang, Hidup, sakit, atau Mati) secara otomatis berdasarkan ambang batas statistik.
 
     Interaksi Interaktif: Tersedia aksi Elus (👋), Makan (🍲), Tidur (💤), dan Main (🎡).
 
