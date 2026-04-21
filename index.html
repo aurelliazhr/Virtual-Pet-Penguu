@@ -289,9 +289,8 @@
         penguu.energy -= 5;
 
         if (penguu.nutrition <= 35 || penguu.energy <= 35)
-        penguu.happiness -= 8;
-        if (penguu.nutrition <= 40 || penguu.energy <= 40) 
-        penguu.health -= 8;
+          penguu.happiness -= 8;
+        if (penguu.nutrition <= 40 || penguu.energy <= 40) penguu.health -= 8;
 
         constrainValues();
         checkState();
